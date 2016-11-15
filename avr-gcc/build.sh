@@ -3,16 +3,26 @@
 #set exit if any error
 set -e
 
+#Set default target
+prefix=/opt/local
+binutils=binutils-2.27
+gcc=gcc-6.2.0
+thread_free=1
+
 #Check conditions
 #Check if sudo
 if [ "$(whoami)" != "root" ]; then
 	echo "Please run it with root"
 	exit 1
 fi
+#Check CPU thread
+echo "checking cpu thread"
+thread=$(sysctl -n hw.ncpu)
+echo "Find ${thread} thread on your CPU"
+thread_use=$((thread-thread_free))
+echo "For safty considered, we will use ${thread_use} thread to compile all object"
+sleep 2
 
-prefix=/opt/local
-binutils=binutils-2.27
-gcc=gcc-6.2.0
 
 echo "checking binutils"
 if [[ -x "$(command -v avr-ld)" ]]; then
@@ -45,9 +55,11 @@ else
 	mkdir build
 	cd build
 	../configure --target=avr --prefix=${prefix}
-	make
+	make -j${thread_use}
 	make install
+	cd ../..
 fi
+
 
 echo "checking gcc"
 if [[ -x "$(command -v avr-gcc)" ]]; then
@@ -80,6 +92,6 @@ else
 	mkdir build
 	cd build
 	../configure --target=avr --prefix=${prefix} --enable-fixed-point --enable-languages=c,c++ --enable-long-long --disable-nls --disable-werror
-	make all-gcc
+	make -j${thread_use} all
 	make install
 fi
