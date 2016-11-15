@@ -29,7 +29,7 @@ sleep 1
 echo "checking binutils"
 if [[ -x "$(command -v avr-ld)" ]]; then
 	echo "avr-ld already exist."
-	echo -e "Please manual uninstall it if you want to compile it.\a"
+	echo "Please manual uninstall it if you want to compile it."
 	sleep 1
 else
 	#Get binutils
@@ -57,8 +57,8 @@ else
 	mkdir build
 	cd build
 	../configure --target=avr --prefix=${prefix}
-	make -j${thread_use}
-	make install
+	make -j${thread_use} -s
+	make -s install
 	cd ../..
 fi
 
@@ -69,7 +69,7 @@ if [[ -x "$(command -v avr-gcc)" ]]; then
 	echo -e "Please manual uninstall it if you want to compile it.\a"
 	sleep 1
 else
-		#Get binutils
+	#Get gcc
 	echo "Checking directory ${gcc}"
 	if [[ ! -d ./${gcc} ]]; then
 		echo "Directory ${gcc} does not exist."
@@ -94,8 +94,8 @@ else
 	mkdir build
 	cd build
 	../configure --target=avr --prefix=${prefix} --enable-fixed-point --enable-languages=c,c++ --enable-long-long --disable-nls --disable-werror
-	make -j${thread_use} all-gcc
-	make install-gcc
+	make -j${thread_use} -s all-gcc
+	make -s install-gcc
 	cd ../..
 fi
 
@@ -105,7 +105,7 @@ if [[ ! -d ./${avr_libc} ]]; then
 	echo "Checking ${avr_libc}.tar.bz2"
 	if [[ ! -f ./${avr_libc}.tar.bz2 ]]; then
 		echo "File ${avr_libc}.tar.gz does not exist."
-		echo "Try to get ${avr_libc}.tar.bz2 from ftp://ftp.gnu.org"
+		echo "Try to get ${avr_libc}.tar.bz2 from http://download.savannah.gnu.org"
 		wget http://download.savannah.gnu.org/releases/avr-libc/${avr_libc}.tar.bz2
 	fi
 	echo "unzip ${avr_libc}.tar.bz2"
@@ -121,7 +121,7 @@ fi
 mkdir build
 cd build
 ../configure --build=`../config.guess` --host=avr
-make -j${thread_use}
-make install
+make -j${thread_use} -s
+make -s install
 cd ../..
 
