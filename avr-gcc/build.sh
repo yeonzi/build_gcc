@@ -70,7 +70,7 @@ else
 		#Get binutils
 	echo "Checking directory ${gcc}"
 	if [[ ! -d ./${gcc} ]]; then
-		echo "Directory binutils does not exist."
+		echo "Directory ${gcc} does not exist."
 		echo "Checking ${gcc}.tar.gz"
 		if [[ ! -f ./${gcc}.tar.gz ]]; then
 			echo "File ${gcc}.tar.gz does not exist."
@@ -80,7 +80,7 @@ else
 		echo "unzip ${gcc}.tar.gz"
 		tar -xf ${gcc}.tar.gz
 	else
-		echo "Directory gcc does not exist."
+		echo "Directory ${gcc} does not exist."
 		echo "Please remove it if you want to redownload it."
 	fi
 
@@ -92,6 +92,7 @@ else
 	mkdir build
 	cd build
 	../configure --target=avr --prefix=${prefix} --enable-fixed-point --enable-languages=c,c++ --enable-long-long --disable-nls --disable-werror
-	make -j${thread_use} all
-	make install
+	make -j${thread_use} all-gcc
+	make install-gcc
+	cd ../..
 fi
