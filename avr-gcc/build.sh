@@ -10,6 +10,8 @@ if [ "$(whoami)" != "root" ]; then
 	exit 1
 fi
 
+binutils=binutils-2.27
+
 echo "checking binutils"
 if [[ -x "$(command -v avr-ld)" ]]; then
 	echo "avr-ld already exist."
@@ -17,24 +19,24 @@ if [[ -x "$(command -v avr-ld)" ]]; then
 	sleep 3
 else
 	#Get binutils
-	echo "Checking directory binutils-2.27"
-	if [[ ! -d ./binutils-2.27 ]]; then
+	echo "Checking directory ${binutils}"
+	if [[ ! -d ./${binutils} ]]; then
 		echo "Directory binutils does not exist."
-		echo "Checking binutils-2.27.tar.gz"
-		if [[ ! -f ./binutils-2.27.tar.gz ]]; then
-			echo "File binutils-2.27.tar.gz does not exist."
-			echo "Try to get binutils-2.27.tar.gz from ftp://ftp.gnu.org"
-			ftp ftp://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.gz
+		echo "Checking ${binutils}.tar.gz"
+		if [[ ! -f ./${binutils}.tar.gz ]]; then
+			echo "File ${binutils}.tar.gz does not exist."
+			echo "Try to get ${binutils}.tar.gz from ftp://ftp.gnu.org"
+			ftp ftp://ftp.gnu.org/gnu/binutils/${binutils}.tar.gz
 		fi
-		echo "unzip binutils-2.27.tar.gz"
-		tar -xf binutils-2.27.tar.gz
+		echo "unzip ${binutils}.tar.gz"
+		tar -xf ${binutils}.tar.gz
 	else
 		echo "Directory binutils does not exist."
 		echo "Please remove it if you want to redownload it."
 	fi
 
 	#Compile binutil.
-	cd binutils-2.27
+	cd ${binutils}
 	if [[ -d ./build ]]; then
 		rm -rf ./build
 	fi
@@ -44,3 +46,4 @@ else
 	make
 	make install
 fi
+
