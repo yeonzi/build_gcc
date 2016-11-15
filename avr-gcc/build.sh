@@ -7,28 +7,30 @@ set -e
 prefix=/opt/local
 binutils=binutils-2.27
 gcc=gcc-6.2.0
+avr_libc='avr-libc-2.0.0'
 thread_free=1
 
 #Check conditions
 #Check if sudo
 if [ "$(whoami)" != "root" ]; then
-	echo "Please run it with root"
+	echo -e "Please run it with root\a"
 	exit 1
 fi
+
 #Check CPU thread
 echo "checking cpu thread"
 thread=$(sysctl -n hw.ncpu)
 echo "Find ${thread} thread on your CPU"
 thread_use=$((thread-thread_free))
-echo "For safty considered, we will use ${thread_use} thread to compile all object"
-sleep 2
+echo -e "For safty considered, we will use ${thread_use} thread to compile all object\a"
+sleep 1
 
 
 echo "checking binutils"
 if [[ -x "$(command -v avr-ld)" ]]; then
 	echo "avr-ld already exist."
-	echo "Please manual uninstall it if you want to compile it."
-	sleep 3
+	echo -e "Please manual uninstall it if you want to compile it.\a"
+	sleep 1
 else
 	#Get binutils
 	echo "Checking directory ${binutils}"
@@ -43,7 +45,7 @@ else
 		echo "unzip ${binutils}.tar.gz"
 		tar -xf ${binutils}.tar.gz
 	else
-		echo "Directory binutils does not exist."
+		echo "Directory binutils already exist."
 		echo "Please remove it if you want to redownload it."
 	fi
 
@@ -64,8 +66,8 @@ fi
 echo "checking gcc"
 if [[ -x "$(command -v avr-gcc)" ]]; then
 	echo "avr-gcc already exist."
-	echo "Please manual uninstall it if you want to compile it."
-	sleep 3
+	echo -e "Please manual uninstall it if you want to compile it.\a"
+	sleep 1
 else
 		#Get binutils
 	echo "Checking directory ${gcc}"
@@ -80,7 +82,7 @@ else
 		echo "unzip ${gcc}.tar.gz"
 		tar -xf ${gcc}.tar.gz
 	else
-		echo "Directory ${gcc} does not exist."
+		echo "Directory ${gcc} already exist."
 		echo "Please remove it if you want to redownload it."
 	fi
 
@@ -96,3 +98,30 @@ else
 	make install-gcc
 	cd ../..
 fi
+
+echo "Checking directory ${avr_libc}"
+if [[ ! -d ./${avr_libc} ]]; then
+	echo "Directory ${avr_libc} does not exist."
+	echo "Checking ${avr_libc}.tar.bz2"
+	if [[ ! -f ./${avr_libc}.tar.bz2 ]]; then
+		echo "File ${avr_libc}.tar.gz does not exist."
+		echo "Try to get ${avr_libc}.tar.bz2 from ftp://ftp.gnu.org"
+		wget http://download.savannah.gnu.org/releases/avr-libc/${avr_libc}.tar.bz2
+	fi
+	echo "unzip ${avr_libc}.tar.bz2"
+	tar -xf ${avr_libc}.tar.bz2
+else
+	echo "Directory ${avr_libc} already exist."
+	echo "Please remove it if you want to redownload it."
+fi
+cd ${avr_libc}
+if [[ -d ./build ]]; then
+	rm -rf ./build
+fi
+mkdir build
+cd build
+../configure --build=`../config.guess` --host=avr
+make -j${thread_use}
+make install
+cd ../..
+
