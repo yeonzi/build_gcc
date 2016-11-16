@@ -3,12 +3,22 @@
 #set exit if any error
 set -e
 
-#Set default target
-prefix=/opt/local
-binutils=binutils-2.27
+#Set target
 gcc=gcc-6.2.0
 avr_libc='avr-libc-2.0.0'
 thread_free=1
+
+read -p "Please input where you want to install it (default:/opt/local):" prefix_input
+prefix=${prefix_input:=/opt/local}
+echo "prefix set as ${prefix}"
+
+read -p "Version of binutils you want to install (default:binutils-2.27):" binutils_input
+binutils=${binutils_input:=binutils-2.27}
+echo "Version of binutils set as ${binutils}"
+
+read -p "Version of gcc you want to install (default:gcc-6.2.0):" gcc_input
+gcc=${gcc_input:=gcc-6.2.0}
+echo "Version of gcc set as ${gcc}"
 
 #Check conditions
 #Check if sudo
@@ -29,7 +39,7 @@ sleep 1
 echo "checking binutils"
 if [[ -x "$(command -v avr-ld)" ]]; then
 	echo "avr-ld already exist."
-	echo "Please manual uninstall it if you want to compile it."
+	echo -e "Please manual uninstall it if you want to compile it.\a"
 	sleep 1
 else
 	#Get binutils
@@ -120,8 +130,24 @@ if [[ -d ./build ]]; then
 fi
 mkdir build
 cd build
-../configure --build=`../config.guess` --host=avr
+../configure --build=`../config.guess` --host=avr --prefix=${prefix}
 make -j${thread_use} -s
+make -s install
+cd ../..
+
+echo "Rebuild gcc"
+cd ${gcc}
+if [[ -d ./build ]]; then
+	rm -rf ./build
+fi
+mkdir build
+cd build
+../configure --target=avr --prefix=${prefix} \
+--enable-fixed-point --enable-languages=c,c++ \
+--enable-long-long --disable-nls --disable-werror \
+--disable-checking --disable-libssp --disable-libada \
+--disable-shared --enable-lto --with-avrlibc=yes --with-dwarf2
+make -j${thread_use} -s all
 make -s install
 cd ../..
 
