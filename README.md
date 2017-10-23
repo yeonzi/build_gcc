@@ -1,10 +1,11 @@
-#Build gcc for Embedded CPU
+# Build gcc for Embedded CPU
+
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](http://opensource.org/licenses/MIT)
 
 编译自己的交叉编译工具链
 
-##The MIT License (MIT)
-Copyright (c) 2016 田中くんはいつもけだるげ
+## The MIT License (MIT)
+Copyright (c) 2016 Yeonji
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
